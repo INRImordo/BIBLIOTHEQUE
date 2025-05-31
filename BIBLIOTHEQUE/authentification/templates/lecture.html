@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque en Ligne</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #60ad5e;
+            --primary-dark: #005005;
+            --secondary-color: #8bc34a;
+            --accent-color: #ffc107;
+            --text-light: #f5f5f5;
+            --text-dark: #333;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text-dark);
+            display: flex;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Navigation verticale */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            color: var(--text-light);
+            padding: 2rem 0;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sidebar-header i {
+            font-size: 2rem;
+            color: var(--accent-color);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding-left: 2.5rem;
+        }
+
+        .nav-link i {
+            width: 24px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-light);
+            font-weight: 500;
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--accent-color);
+        }
+
+        /* Contenu principal */
+        .main-content {
+            flex: 1;
+            padding: 3rem;
+            max-width: calc(100% - 300px);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-light);
+        }
+
+        .page-title {
+            color: var(--primary-dark);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Liste déroulante des documents */
+        .dropdown-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .dropdown {
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+        }
+
+        .dropdown:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .dropdown-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .dropdown-header:hover {
+            background-color: var(--primary-light);
+        }
+
+        .dropdown-header i {
+            transition: transform 0.3s;
+        }
+
+        .dropdown-header.active i {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-content {
+            background-color: var(--card-bg);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .dropdown-content.show {
+            max-height: 1000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .documents-list {
+            list-style: none;
+        }
+
+        .document-item {
+            border-bottom: 1px solid #eee;
+        }
+
+        .document-item:last-child {
+            border-bottom: none;
+        }
+
+        .document-link {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s;
+        }
+
+        .document-link:hover {
+            background-color: rgba(139, 195, 74, 0.1);
+            padding-left: 2rem;
+            color: var(--primary-dark);
+        }
+
+        .document-link i {
+            color: var(--secondary-color);
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Vue de lecture */
+        .reader-container {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 2.5rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            display: none;
+        }
+
+        .reader-container.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .document-title {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary-light);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .document-title i {
+            color: var(--accent-color);
+        }
+
+        .page-content {
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            min-height: 60vh;
+            font-size: 1.1rem;
+        }
+
+        .page-number {
+            text-align: center;
+            color: var(--primary-light);
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .page-btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .back-to-list {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.6rem 1.2rem;
+            background-color: var(--secondary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .back-to-list:hover {
+            background-color: var(--primary-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 1.5rem 0;
+            }
+
+            .main-content {
+                max-width: 100%;
+                padding: 2rem;
+            }
+
+            .dropdown-container {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            .reader-container {
+                padding: 1.5rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .document-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation verticale -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-book-open"></i>
+            <h1>Bibliothèque Verte</h1>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#livres" class="nav-link active">
+                    <i class="fas fa-book"></i>
+                    <span>Livres</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#revues" class="nav-link">
+                    <i class="fas fa-newspaper"></i>
+                    <span>Revues</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#articles" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Articles</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#theses" class="nav-link">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Thèses</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-search"></i>
+                    <span>Rechercher</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'espace_lecteur'%}" class="nav-link">
+                    <i class="fas fa-user-cog"></i>
+                    <span>Mon Profil</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="main-content">
+        <!-- Section Livres (visible par défaut) -->
+        <section id="livres">
+            <div class="page-header">
+                <h2 class="page-title"><i class="fas fa-book"></i> Livres disponibles</h2>
+            </div>
+
+            <div class="dropdown-container">
+                <!-- Roman -->
+                <div class="dropdown">
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        <span><i class="fas fa-book-reader"></i> Romans</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content" id="roman-dropdown">
+                        <ul class="documents-list">
+                            <li class="document-item">
+                                <a href="#le-petit-prince" class="document-link" onclick="showDocument('le-petit-prince', 'Le Petit Prince', 3)">
+                                    <i class="fas fa-book"></i>
+                                    <span>Le Petit Prince - Antoine de Saint-Exupéry</span>
+                                </a>
+                            </li>
+                            <li class="document-item">
+                                <a href="#letranger" class="document-link" onclick="showDocument('letranger', 'L\'Étranger', 2)">
+                                    <i class="fas fa-book"></i>
+                                    <span>L'Étranger - Albert Camus</span>
+                                </a>
+                            </li>
+                            <li class="document-item">
+                                <a href="#1984" class="document-link" onclick="showDocument('1984', '1984', 4)">
+                                    <i class="fas fa-book"></i>
+                                    <span>1984 - George Orwell</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Science-Fiction -->
+                <div class="dropdown">
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        <span><i class="fas fa-rocket"></i> Science-Fiction</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content" id="sf-dropdown">
+                        <ul class="documents-list">
+                            <li class="document-item">
+                                <a href="#dune" class="document-link" onclick="showDocument('dune', 'Dune', 5)">
+                                    <i class="fas fa-book"></i>
+                                    <span>Dune - Frank Herbert</span>
+                                </a>
+                            </li>
+                            <li class="document-item">
+                                <a href="#fondation" class="document-link" onclick="showDocument('fondation', 'Fondation', 3)">
+                                    <i class="fas fa-book"></i>
+                                    <span>Fondation - Isaac Asimov</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Poésie -->
+                <div class="dropdown">
+                    <div class="dropdown-header" onclick="toggleDropdown(this)">
+                        <span><i class="fas fa-pen-fancy"></i> Poésie</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-content" id="poesie-dropdown">
+                        <ul class="documents-list">
+                            <li class="document-item">
+                                <a href="#fleurs-du-mal" class="document-link" onclick="showDocument('fleurs-du-mal', 'Les Fleurs du Mal', 2)">
+                                    <i class="fas fa-book"></i>
+                                    <span>Les Fleurs du Mal - Charles Baudelaire</span>
+                                </a>
+                            </li>
+                            <li class="document-item">
+                                <a href="#alcools" class="document-link" onclick="showDocument('alcools', 'Alcools', 3)">
+                                    <i class="fas fa-book"></i>
+                                    <span>Alcools - Guillaume Apollinaire</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vue de lecture -->
+        <div id="reader-view" class="reader-container">
+            <h2 class="document-title"><i class="fas fa-book-open"></i> <span id="doc-title">Titre du document</span></h2>
+            <div class="page-number">Page <span id="current-page">1</span> sur <span id="total-pages">3</span></div>
+            <div class="page-content" id="page-content">
+                <!-- Le contenu de la page sera injecté ici -->
+            </div>
+
+            <div class="pagination">
+                <a href="#" class="page-btn" id="prev-btn" onclick="prevPage()"><i class="fas fa-arrow-left"></i> Précédent</a>
+                <a href="#" class="page-btn" id="next-btn" onclick="nextPage()">Suivant <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <a href="#" class="back-to-list" onclick="hideReader()"><i class="fas fa-arrow-left"></i> Retour à la liste</a>
+        </div>
+    </main>
+
+    <!-- Contenu des documents -->
+    <!-- Le Petit Prince -->
+    <div id="le-petit-prince-content" style="display:none;">
+        <div data-page="1">
+            <h3>Chapitre 1</h3>
+            <p>Lorsque j'avais six ans j'ai vu, une fois, une magnifique image, dans un livre sur la Forêt Vierge qui s'appelait "Histoires Vécues". Ça représentait un serpent boa qui avalait un fauve. Voilà la copie du dessin.</p>
+            <p>On disait dans le livre: "Les serpents boas avalent leur proie tout entière, sans la mâcher. Ensuite ils ne peuvent plus bouger et ils dorment pendant les six mois de leur digestion."</p>
+        </div>
+        <div data-page="2">
+            <h3>Chapitre 2</h3>
+            <p>C'est ainsi que j'ai vécu seul, sans personne avec qui parler véritablement, jusqu'à une panne dans le désert du Sahara, il y a six ans. Quelque chose s'était cassé dans mon moteur.</p>
+            <p>Et comme je n'avais avec moi ni mécanicien, ni passagers, je me préparai à essayer de réussir, tout seul, une réparation difficile. C'était pour moi une question de vie ou de mort. J'avais à peine de l'eau à boire pour huit jours.</p>
+        </div>
+        <div data-page="3">
+            <h3>Chapitre 3</h3>
+            <p>La première nuit, j'ai donc dormi sur le sable à mille milles de toute terre habitée. J'étais bien plus isolé qu'un naufragé sur un radeau au milieu de l'océan. Alors vous imaginez ma surprise, au lever du jour, quand une drôle de petite voix m'a réveillé.</p>
+            <p>Elle disait: "S'il vous plaît... dessine-moi un mouton!"</p>
+        </div>
+    </div>
+
+    <!-- L'Étranger -->
+    <div id="letranger-content" style="display:none;">
+        <div data-page="1">
+            <h3>Première partie</h3>
+            <p>Aujourd'hui, maman est morte. Ou peut-être hier, je ne sais pas. J'ai reçu un télégramme de l'asile: «Mère décédée. Enterrement demain. Sentiments distingués.» Cela ne veut rien dire. C'était peut-être hier.</p>
+            <p>L'asile de vieillards est à Marengo, à quatre-vingts kilomètres d'Alger. Je prendrai l'autobus à deux heures et j'arriverai dans l'après-midi. Ainsi, je pourrai veiller et je rentrerai demain soir.</p>
+        </div>
+        <div data-page="2">
+            <h3>Première partie (suite)</h3>
+            <p>J'ai demandé deux jours de congé à mon patron et il ne pouvait pas me les refuser avec une excuse pareille. Mais il n'avait pas l'air content. Je lui ai même dit: «Ce n'est pas de ma faute.» Il n'a pas répondu. J'ai pensé alors que je n'aurais pas dû lui dire cela. En somme, je n'avais pas à m'excuser.</p>
+        </div>
+    </div>
+
+    <!-- Script pour gérer l'affichage -->
+    <script>
+        // Variables globales
+        let currentDoc = null;
+        let currentPage = 1;
+        let totalPages = 1;
+
+        // Fonction pour basculer les listes déroulantes
+        function toggleDropdown(header) {
+            header.classList.toggle('active');
+            const content = header.nextElementSibling;
+            content.classList.toggle('show');
+        }
+
+        // Fonction pour afficher un document
+        function showDocument(docId, title, pages) {
+            // Masquer la liste des documents
+            document.querySelector('.dropdown-container').style.display = 'none';
+            
+            // Afficher le lecteur
+            const reader = document.getElementById('reader-view');
+            reader.classList.add('show');
+            
+            // Mettre à jour les informations du document
+            document.getElementById('doc-title').textContent = title;
+            document.getElementById('total-pages').textContent = pages;
+            
+            // Stocker les informations actuelles
+            currentDoc = docId;
+            currentPage = 1;
+            totalPages = pages;
+            
+            // Charger la première page
+            loadPage();
+        }
+
+        // Fonction pour masquer le lecteur
+        function hideReader() {
+            document.querySelector('.dropdown-container').style.display = 'block';
+            document.getElementById('reader-view').classList.remove('show');
+        }
+
+        // Fonction pour charger une page
+        function loadPage() {
+            const contentDiv = document.getElementById('page-content');
+            const pageContent = document.querySelector(`#${currentDoc}-content div[data-page="${currentPage}"]`);
+            
+            if (pageContent) {
+                contentDiv.innerHTML = pageContent.innerHTML;
+            } else {
+                contentDiv.innerHTML = '<p>Page non trouvée.</p>';
+            }
+            
+            // Mettre à jour le numéro de page
+            document.getElementById('current-page').textContent = currentPage;
+            
+            // Gérer les boutons de pagination
+            document.getElementById('prev-btn').disabled = currentPage <= 1;
+            document.getElementById('next-btn').disabled = currentPage >= totalPages;
+        }
+
+        // Fonction pour la page précédente
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                loadPage();
+            }
+        }
+
+        // Fonction pour la page suivante
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                loadPage();
+            }
+        }
+
+        // Ouvrir la première dropdown par défaut
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.dropdown-header').click();
+        });
+    </script>
+</body>
+</html>

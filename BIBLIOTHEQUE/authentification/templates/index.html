@@ -1,0 +1,181 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque Verte - Lire, Découvrir, Partager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{%  static 'index.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="main-header" id="Accueil">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>Bibliothèque Verte</span>
+                </div>
+                <div class="auth-buttons">
+                    <a href="{% url 'connexion' %}" class="btn btn-outline">
+                        <i class="fas fa-sign-in-alt"></i> Connexion
+                    </a>
+                    <a href="{% url 'utilisateurs' %}" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Inscription
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Explorez notre univers littéraire</h1>
+                <p class="subtitle">Découvrez, empruntez et partagez vos lectures favorites parmi notre vaste collection de livres.</p>
+                
+                <div class="cta-buttons">
+                    <a href="{% url "catalogue" %}" class="btn btn-primary btn-large">
+                        <i class="fas fa-book"></i> Consulter le catalogue
+                    </a>
+                    <a href="{% url "catalogue" %}" class="btn btn-outline btn-large">
+                        <i class="fas fa-info-circle"></i> En savoir plus
+                    </a>
+                </div>
+            </div>
+            
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Bibliothèque avec étagères de livres">
+            </div>
+        </div>
+    </main>
+
+    <section id="features" class="features-section">
+        <div class="container">
+            <h2>Pourquoi choisir notre bibliothèque?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-reader"></i>
+                    </div>
+                    <h3>Vaste collection</h3>
+                    <p>Plus de 50,000 livres couvrant tous les genres littéraires pour satisfaire votre soif de lecture.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Accès mobile</h3>
+                    <p>Consultez notre catalogue et gérez vos emprunts depuis votre smartphone ou tablette.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Engagement écologique</h3>
+                    <p>Nous promouvons le partage de livres pour réduire notre impact environnemental.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials-section">
+        <div class="container">
+            <h2>Ce que disent nos membres</h2>
+            <div class="testimonial-card">
+                <div class="testimonial-content">
+                    <p>"Cette bibliothèque a transformé ma façon de lire. Le catalogue est impressionnant et la plateforme tellement facile à utiliser!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Marie D.">
+                        <div>
+                            <h4>Marie D.</h4>
+                            <span>Membre depuis 2020</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    
+    <div id="chatbot" class="chatbot-container" style="display: none;">
+        <div class="chatbot-header">
+            <span>🤖 Assistance</span>
+            <button onclick="fermerChatbot()">×</button>
+        </div>
+    
+        <div class="chatbot-body" id="chat-body">
+            <!-- Messages ajoutés ici dynamiquement -->
+        </div>
+    
+        <textarea id="chat-input" placeholder="Votre message..."></textarea>
+        <button onclick="envoyerMessage()">Envoyer</button>
+    </div>
+    
+
+    <div class="chatbot-button" onclick="ouvrirChatbot()">
+        <i class="fas fa-comments"></i>
+    </div>
+
+
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>Bibliothèque Verte</span>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="links-column">
+                        <h4>Navigation</h4>
+                        <ul>
+                            <li><a href="#Accueil">Accueil</a></li>
+                            <li><a href="#">Catalogue</a></li>
+                            <li><a href="{% url 'connexion' %}">Connexion</a></li>
+                            <li><a href="{% url 'utilisateurs' %}">Inscription</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="links-column">
+                        <h4>À propos</h4>
+                        <ul>
+                            <li><a href="#">Notre mission</a></li>
+                            <li><a href="#">Équipe</a></li>
+                            <li><a href="#">Partenaires</a></li>
+                            <li><a href="#">Carrières</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="links-column">
+                        <h4>Contact</h4>
+                        <ul>
+                            <li><i class="fas fa-map-marker-alt"></i> 123 Rue des Livres, Paris</li>
+                            <li><i class="fas fa-phone"></i> +33 1 23 45 67 89</li>
+                            <li><i class="fas fa-envelope"></i> contact@bibliothequeverte.fr</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; <span id="year"></span> Bibliothèque Verte. Tous droits réservés.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{%  static 'index.js' %}"></script>
+</body>
+</html>

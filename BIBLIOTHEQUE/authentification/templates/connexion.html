@@ -1,0 +1,67 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Bibliothèque en Ligne</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'connexion.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <h1>Bibliothèque Verte</h1>
+            </div>
+            <p>Accédez à votre compte personnel</p>
+        </div>
+
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    
+
+        <form id="loginForm" class="form" method="post" action="{% url 'connexion' %}">
+                {% csrf_token %} 
+            <div class="form-group">
+                <label for="username">
+                    <i class="fas fa-envelope"></i> Nom Utilisateur
+                </label>
+                <input type="text" id="username" name="username" required placeholder="Entrez votre nom ">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i> Mot de passe
+                </label>
+                <input type="password" id="password" name="password" required placeholder="Entrez votre mot de passe">
+                <div class="forgot-password">
+                    <a href="#">Mot de passe oublié?</a>
+                </div>
+            </div>
+            
+            <div class="form-group remember">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember">Se souvenir de moi</label>
+            </div>
+            
+            <button type="submit" class="btn">
+                <i class="fas fa-sign-in-alt"></i> Se connecter
+            </button>
+            
+            <div class="register-link">
+                Pas encore membre? <a href="{% url 'utilisateurs' %}">Créez un compte</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- <script src="{% static 'connexion.js' %}"></script> -->
+</body>
+</html>

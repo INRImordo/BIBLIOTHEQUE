@@ -1,0 +1,231 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque Verte - Accueil</title>
+    <link rel="stylesheet" href="{% static 'accueil.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>Bibliothèque Verte</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#presentation"><i class="fas fa-info-circle"></i> Présentation</a></li>
+                    <li><a href="#popular"><i class="fas fa-star"></i> Livres populaires</a></li>
+                    <li><a href="{% url 'catalogue' %}" class="active"><i class="fas fa-search"></i> Catalogue</a></li>
+                    <li><a href="#new"><i class="fas fa-certificate"></i> Nouveautés</a></li>
+                    <li><a href="{% url 'utilisateurs' %}" class="btn-signup"><i class="fas fa-user-plus"></i> {{name}}</a></li>
+                </ul>
+                <div class="burger">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Découvrez notre collection de livres en ligne</h1>
+                <p>Explorez des milliers d'ouvrages sans besoin d'emprunt</p>
+                <a href="{% url 'catalogue' %}" class="btn-primary"><i class="fas fa-search"></i> Explorer maintenant</a>
+            </div>
+        </section>
+
+        <section id="presentation" class="presentation">
+            <div class="container">
+                <h2><i class="fas fa-info-circle"></i> Notre Bibliothèque</h2>
+                <div class="presentation-content">
+                    <div class="presentation-text">
+                        <p>La Bibliothèque Verte vous offre un accès gratuit à une vaste collection de livres numériques. Notre mission est de promouvoir la lecture et la culture sans barrières.</p>
+                        <p>Parcourez nos rayons virtuels, découvrez des auteurs classiques et contemporains, et enrichissez vos connaissances à votre rythme.</p>
+                        <p>Pas besoin d'emprunter - tous nos livres sont disponibles en lecture libre et gratuite.</p>
+                    </div>
+                    <div class="presentation-image">
+                        <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Bibliothèque">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="popular" class="popular-books">
+            <div class="container">
+                <h2><i class="fas fa-star"></i> {{populaires_count}}Livres populaires</h2>
+                <div class="books-grid">
+                    {% comment %} <div class="book-card">
+                        <div class="book-cover">
+                            <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=60" alt="Livre populaire 1">
+                            <div class="popular-badge"><i class="fas fa-fire"></i> Populaire</div>
+                        </div>
+                        <h3>Le Guide du Voyageur</h3>
+                        <p class="author">Jean Dupont</p>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div> {% endcomment %}
+                    
+                    {% for livre in livres %}
+                        {% if livre.badge == "Populaire" %}
+                            <div class="book-card">
+                                <div class="book-cover">
+                                    <img src="{{ livre.couverture_url }}" alt="{{ livre.titre }}">
+                                    <div class="popular-badge"><i class="fas fa-certificate"></i> Nouveau</div>
+                                </div>
+                                <h3>{{ livre.titre }}</h3>
+                                <p class="author">{{ livre.auteur }}</p>
+                                <div class="rating">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= livre.note %}
+                                            <i class="fas fa-star"></i>
+                                        {% elif livre.note|floatformat:1 == forloop.counter0|stringformat:"s.5" %}
+                                            <i class="fas fa-star-half-alt"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+
+                </div>
+            </div>
+        </section>
+
+        <section id="new" class="new-books">
+            <div class="container">
+                <h2><i class="fas fa-certificate"></i> {{nouveaute_count}}Nouveautés</h2>
+                <div class="books-grid">
+                    {% comment %} <div class="book-card">
+                        <div class="book-cover">
+                            <img src="https://images.unsplash.com/photo-1531346878377-a5be20888e57?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=60" alt="Nouveau livre 1">
+                            <div class="new-badge"><i class="fas fa-certificate"></i> Nouveau</div>
+                        </div>
+                        <h3>Les Secrets du Passé</h3>
+                        <p class="author">Sophie Durand</p>
+                    </div> {% endcomment %}
+                    
+                    
+                    {% for livre in livres %}
+                        {% if livre.badge == "Nouveau" %}
+                            <div class="book-card">
+                                <div class="book-cover">
+                                    <img src="{{ livre.couverture_url }}" alt="{{ livre.titre }}">
+                                    <div class="new-badge"><i class="fas fa-certificate"></i> {{livre.badge}}</div>
+                                </div>
+                                <h3>{{ livre.titre }}</h3>
+                                <p class="author">{{ livre.auteur }}</p>
+                                <div class="rating">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= livre.note %}
+                                            <i class="fas fa-star"></i>
+                                        {% elif livre.note|floatformat:1 == forloop.counter0|stringformat:"s.5" %}
+                                            <i class="fas fa-star-half-alt"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
+                    
+                </div>
+            </div>
+        </section>
+
+        <section class="cta">
+            <div class="container">
+                <h2>Prêt à découvrir plus?</h2>
+                <p>Inscrivez-vous pour accéder à des fonctionnalités supplémentaires comme les favoris, les recommandations personnalisées et bien plus encore!</p>
+                <a href="{% url "utilisateurs" %}" class="btn-primary"><i class="fas fa-user-plus"></i> S'inscrire maintenant</a>
+            </div>
+        </section>
+
+
+
+    </main>
+
+   
+
+    
+    <div id="chatbot" class="chatbot-container" style="display: none;">
+        <div class="chatbot-header">
+            <span>🤖 Assistance</span>
+            <button onclick="fermerChatbot()">×</button>
+        </div>
+    
+        <div class="chatbot-body" id="chat-body">
+            <!-- Messages ajoutés ici dynamiquement -->
+        </div>
+    
+        <textarea id="chat-input" placeholder="Votre message..."></textarea>
+        <button onclick="envoyerMessage()">Envoyer</button>
+    </div>
+    
+
+    <div class="chatbot-button" onclick="ouvrirChatbot()">
+        <i class="fas fa-comments"></i>
+    </div>
+
+
+
+
+    <div class="chatbot-button" onclick="ouvrirChatbot()">
+        <i class="fas fa-comments"></i>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-book-open"></i> Bibliothèque Verte</h3>
+                    <p>Votre porte d'entrée vers le monde des livres numériques.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Liens rapides</h3>
+                    <ul>
+                        <li><a href="#presentation"><i class="fas fa-chevron-right"></i> Présentation</a></li>
+                        <li><a href="#popular"><i class="fas fa-chevron-right"></i> Livres populaires</a></li>
+                        <li><a href="#new"><i class="fas fa-chevron-right"></i> Nouveautés</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> S'inscrire</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> contact@bibliothequeverte.fr</li>
+                        <li><i class="fas fa-phone"></i> +33 1 23 45 67 89</li>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Rue des Livres, Paris</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Bibliothèque Verte. Tous droits réservés.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'accueil.js' %}"></script>
+
+    
+</body>
+</html>
