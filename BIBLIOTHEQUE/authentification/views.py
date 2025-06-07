@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
@@ -190,3 +190,14 @@ def espace_lecteur(request):
 
 def lecture(request):
     return render(request, 'lecture.html')
+
+
+
+
+def masquer_livre(request, livre_id):
+    livre = get_object_or_404(Livre, id=livre_id)
+    livre.visible = False
+    livre.save()
+    # Rediriger vers la liste des livres après avoir masqué
+    return redirect('liste_livres')
+    

@@ -56,6 +56,8 @@ class Livre(models.Model):
     note = models.FloatField(default=0)
     nb_avis = models.IntegerField(default=0)
     pdf = models.FileField(upload_to='livres/pdf/', blank=True, null=True)
+    visible = models.BooleanField(default=True)
+
 
     def __str__(self):
         return f"{self.titre} - {self.auteur}"
