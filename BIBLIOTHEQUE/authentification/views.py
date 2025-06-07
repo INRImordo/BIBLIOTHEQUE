@@ -201,3 +201,28 @@ def masquer_livre(request, livre_id):
     # Rediriger vers la liste des livres après avoir masqué
     return redirect('liste_livres')
     
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Livre, BibliothequeUtilisateur
+
+@login_required
+def ma_bibliotheque(request):
+    bibliotheque = BibliothequeUtilisateur.objects.filter(utilisateur=request.user).select_related('livre')
+    return render(request, 'bibliotheque.html', {'bibliotheque': bibliotheque})
+
+@login_required
+def ajouter_a_bibliotheque(request, livre_id):
+    livre = get_object_or_404(Livre, id=livre_id)
+    # Crée un lien utilisateur-livre si non existant
+    BibliothequeUtilisateur.objects.get_or_create(utilisateur=request.user, livre=livre)
+    return redirect('ma_bibliotheque')
+
+@login_required
+def supprimer_livre(request, livre_id):
+    item = get_object_or_404(BibliothequeUtilisateur, utilisateur=request.user, livre_id=livre_id)
+    item.delete()
+    return redirect('ma_bibliotheque')
+

@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ma bibliothèque</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e6f4ea; /* vert très clair */
+      color: #1b3a2d; /* vert foncé pour le texte */
+      margin: 20px auto;
+      max-width: 700px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #a4d4aa;
+    }
+    h1 {
+      color: #2e7d32; /* vert moyen */
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background-color: #c8e6c9; /* vert doux */
+      border: 1px solid #a5d6a7;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      padding: 15px 20px;
+      box-shadow: 1px 1px 5px #9ccc65;
+      transition: background-color 0.3s ease;
+    }
+    li:hover {
+      background-color: #a5d6a7;
+    }
+    a {
+      color: #2e7d32;
+      text-decoration: none;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .note, .commentaire {
+      font-style: italic;
+      margin: 5px 0 10px 0;
+    }
+    .empty {
+      color: #4caf50;
+      font-weight: bold;
+      text-align: center;
+      padding: 20px;
+      border: 2px dashed #81c784;
+      border-radius: 10px;
+      background-color: #f1f8e9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ma bibliothèque</h1>
+  <ul>
+    {% for item in bibliotheque %}
+      <li>
+        <strong>{{ item.livre.titre }}</strong> par {{ item.livre.auteur }}<br>
+        <span class="note">Note : {{ item.note|default:"Pas encore noté" }}</span><br>
+        <span class="commentaire">Commentaire : {{ item.commentaire|default:"Aucun commentaire" }}</span><br>
+        <a href="{% url 'supprimer_livre' item.livre.id %}">Supprimer</a> | 
+      </li>
+    {% empty %}
+      <li class="empty">Votre bibliothèque est vide.</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

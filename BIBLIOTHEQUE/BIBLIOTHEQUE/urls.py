@@ -34,4 +34,10 @@ urlpatterns = [
 
 
     path('api/chatbot/', views.chatbot_view, name='chatbot'),
+    
+    path('bibliotheque/', views.ma_bibliotheque, name='ma_bibliotheque'),
+    path('bibliotheque/supprimer/<int:livre_id>/', views.supprimer_livre, name='supprimer_livre'),
+    path('ajouter_bibliotheque/<int:livre_id>/', views.ajouter_a_bibliotheque, name='ajouter_a_bibliotheque'),
+
+
 ]

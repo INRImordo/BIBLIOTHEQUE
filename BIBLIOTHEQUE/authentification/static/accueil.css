@@ -126,6 +126,7 @@ nav {
 
 .nav-links a:hover {
     color: var(--primary-color);
+    color: #eee;
 }
 
 .nav-links i {
@@ -578,6 +579,8 @@ footer {
     border-bottom-right-radius: 12px;
     transition: background-color 0.3s;
 }
+
+
 
 #chatbot button[onclick="envoyerMessage()"]:hover {
     background-color: #1b5e20;

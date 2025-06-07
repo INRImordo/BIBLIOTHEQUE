@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 
+from BIBLIOTHEQUE import settings
+
 
 
 class Utilisateur(AbstractUser):
@@ -63,3 +65,18 @@ class Livre(models.Model):
         return f"{self.titre} - {self.auteur}"
 
 
+
+class BibliothequeUtilisateur(models.Model):
+    utilisateur = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='bibliotheque')
+    livre = models.ForeignKey(Livre, on_delete=models.CASCADE)
+    date_consultation = models.DateTimeField(auto_now_add=True)
+
+    # Avis de l'utilisateur sur ce livre
+    note = models.FloatField(null=True, blank=True)
+    commentaire = models.TextField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('utilisateur', 'livre')
+
+    def __str__(self):
+        return f"{self.utilisateur.username} - {self.livre.titre}"
