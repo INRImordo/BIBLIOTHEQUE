@@ -116,7 +116,8 @@ def connexion(request):
             username = identifiant  # sinon on suppose que c'est un username
 
         user = authenticate(request, username=username, password=password)
-        if user is not None:
+        if user is not None: 
+            get_local()
             login(request, user)
             return redirect('accueil')
         else:
