@@ -139,6 +139,7 @@ def accueil(request):
     nouveaute_count = Livre.objects.filter(badge="Nouveau").count()
 
     total_livres = livres.count()
+    get_local()
 
     cxt = {
         "livres":livres,
