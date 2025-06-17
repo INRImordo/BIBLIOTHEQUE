@@ -41,3 +41,23 @@ class ConnexionForm(forms.Form):
                 raise forms.ValidationError("Identifiants invalides.")
             cleaned_data['user'] = user
         return cleaned_data
+    
+
+
+class SearchForm(forms.Form):
+    titre = forms.CharField(required=False)
+    langue = forms.CharField(required=False)
+    annee_min = forms.IntegerField(required=False)
+    annee_max = forms.IntegerField(required=False)
+    editeur = forms.CharField(required=False)
+    tri = forms.ChoiceField(
+        required=False,
+        choices=[
+            ('', 'Pertinence'),
+            ('titre_asc', 'Titre (A-Z)'),
+            ('titre_desc', 'Titre (Z-A)'),
+            ('date_desc', 'Date (récent)'),
+            ('date_asc', 'Date (ancien)'),
+            ('popularite', 'Popularité')
+        ]
+    )

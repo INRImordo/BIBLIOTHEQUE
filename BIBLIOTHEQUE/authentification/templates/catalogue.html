@@ -33,28 +33,43 @@
             <div class="container">
                 <h1><i class="fas fa-search"></i> Rechercher des livres</h1>
                 
-                <div class="search-box">
-                    <div class="search-bar">
-                        <input type="text" placeholder="Rechercher par titre, auteur, ISBN...">
-                        <button class="search-btn"><i class="fas fa-search"></i> Rechercher</button>
+                <form method="get">
+                    <div class="search-box">
+                        <div class="search-bar">
+                            <input
+                                type="text"
+                                name="titre"
+                                placeholder="Rechercher par titre, auteur, ISBN..."
+                                class="search-input"
+                                id="search-bar-input"
+                                value="{{ request.GET.titre }}"
+                            >
+                            <button class="search-btn" type="submit">
+                                <i class="fas fa-search"></i> Rechercher
+                            </button>
+                        </div>
+                        <button class="filter-toggle" type="button">
+                            <i class="fas fa-sliders-h"></i> Filtres avancés
+                        </button>
                     </div>
-                    <button class="filter-toggle"><i class="fas fa-sliders-h"></i> Filtres avancés</button>
-                </div>
+                </form>
+                
 
                 <div class="advanced-filters">
+                    {% comment %}  {% endcomment %}
                     <div class="filter-group">
                         <label><i class="fas fa-book"></i> Genre</label>
-                        <select>
+                        <select name="genre"> <!-- 👈 name ajouté ici -->
                             <option value="">Tous les genres</option>
-                            <option>Roman</option>
-                            <option>Science-Fiction</option>
-                            <option>Fantasy</option>
-                            <option>Policier</option>
-                            <option>Biographie</option>
-                            <option>Histoire</option>
-                            <option>Science</option>
+                            <option {% if request.GET.genre == "Roman" %}selected{% endif %}>Roman</option>
+                            <option {% if request.GET.genre == "Science-Fiction" %}selected{% endif %}>Science-Fiction</option>
+                            <option {% if request.GET.genre == "Fantasy" %}selected{% endif %}>Fantasy</option>
+                            <option {% if request.GET.genre == "Policier" %}selected{% endif %}>Policier</option>
+                            <option {% if request.GET.genre == "Biographie" %}selected{% endif %}>Biographie</option>
+                            <option {% if request.GET.genre == "Histoire" %}selected{% endif %}>Histoire</option>
+                            <option {% if request.GET.genre == "Science" %}selected{% endif %}>Science</option>
                         </select>
-                    </div>
+                    </div>                    
                     
                     <div class="filter-group">
                         <label><i class="fas fa-language"></i> Langue</label>
@@ -97,7 +112,7 @@
             </div>
         </section>
 
-        <section class="results-section">
+        <section name="tri" class="results-section">
             <div class="container">
                 <div class="results-header">
                     <h2><i class="fas fa-book"></i> Résultats ({{livres|length}} livres trouvés)</h2>
@@ -173,8 +188,14 @@
                                 <i class="fas fa-star"></i>
                                 <i class="fas fa-star-half-alt"></i>
                                 <span>({{ livre.nb_avis }})</span>
+                                
+                                &ensp; &emsp;<a href="{% url 'ajouter_a_bibliotheque' livre.id %}" style="border: 1px solid var(--primary-color); padding: 2px 10px;"  class="btn-signup" title="ajouter a bibliotheque">+</a>
                             </div>
-                            <button class="details-btn"><i class="fas fa-info-circle"></i> Détails</button>
+                            
+
+                            <a href="{% url 'lire_livre' livre.id %}" class="details-btn">
+                                <i class="fas fa-info-circle"></i> Lire le livre
+                            </a>
                         </div>
                     </div>
                     {% endfor %}

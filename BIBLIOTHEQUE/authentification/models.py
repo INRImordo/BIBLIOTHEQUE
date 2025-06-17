@@ -47,6 +47,15 @@ class Livre(models.Model):
         ('Populaire', 'Populaire'),
         ('', 'Aucun'),
     ]
+    GENRE_CHOICES = [
+        ('Roman', 'Roman'),
+        ('Science-Fiction', 'Science-Fiction'),
+        ('Fantasy', 'Fantasy'),
+        ('Policier', 'Policier'),
+        ('Biographie', 'Biographie'),
+        ('Histoire', 'Histoire'),
+        ('Science', 'Science'),
+    ]
 
     isbn = models.CharField(max_length=20, unique=True)
     titre = models.CharField(max_length=200)
@@ -55,6 +64,7 @@ class Livre(models.Model):
     langue = models.CharField(max_length=50)
     couverture_url = models.URLField()
     badge = models.CharField(max_length=50, choices=BADGE_CHOICES, blank=True, null=True)  
+    genre = models.CharField(max_length=100, choices=GENRE_CHOICES, blank=True, null=True)  
     note = models.FloatField(default=0)
     nb_avis = models.IntegerField(default=0)
     pdf = models.FileField(upload_to='livres/pdf/', blank=True, null=True)

@@ -159,8 +159,8 @@ AUTHENTICATION_BACKENDS = [
 # j'ajoute des configurations a fin de pouvoir envoyer des emails
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'loricedjeuwou@gmail.com'
-EMAIL_HOST_PASSWORD =  'dznfpltpcoxasnol'    
+EMAIL_HOST_USER = 'im81entreprise@gmail.com'
+EMAIL_HOST_PASSWORD =  'ijfhqqeouqimptof'    
 EMAIL_PORT = 587     
 EMAIL_USE_TLS = True
 # FIN de mes config

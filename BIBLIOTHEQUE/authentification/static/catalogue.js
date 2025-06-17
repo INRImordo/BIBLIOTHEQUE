@@ -183,3 +183,24 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load', animateOnScroll);
     window.addEventListener('scroll', animateOnScroll);
 });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const advancedFilters = document.querySelector('.advanced-filters');
+
+    // Vérifie s’il y a des paramètres de filtre actifs dans l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasFilters = ['genre', 'langue', 'annee_min', 'annee_max', 'editeur', 'tri'].some(param => urlParams.get(param));
+
+    if (hasFilters) {
+        advancedFilters.style.display = 'block';
+    }
+
+    // Afficher les filtres manuellement (par le bouton sliders)
+    const toggleBtn = document.querySelector('.filter-toggle');
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            advancedFilters.style.display = (advancedFilters.style.display === 'block') ? 'none' : 'block';
+        });
+    }
+});

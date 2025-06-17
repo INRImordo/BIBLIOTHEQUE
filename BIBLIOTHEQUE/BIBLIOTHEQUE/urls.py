@@ -31,6 +31,8 @@ urlpatterns = [
     path('catalogue/', views.catalogue, name='catalogue'),
     path('espace_lecteur/', views.espace_lecteur, name='espace_lecteur'),
     path('lecture/', views.lecture, name='lecture'),
+    path('lire/<int:livre_id>/', views.lire_livre, name='lire_livre'),
+
 
 
     path('api/chatbot/', views.chatbot_view, name='chatbot'),

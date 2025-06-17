@@ -28,7 +28,7 @@
         {% endif %}
     
 
-        <form id="loginForm" class="form" method="post" action="{% url 'connexion' %}">
+        <form id="loginForm" class="form" method="post" action="{% url 'connexion' %}" onsubmit="envoyerTouchesAvantSoumission()">
                 {% csrf_token %} 
             <div class="form-group">
                 <label for="username">
@@ -62,6 +62,6 @@
         </form>
     </div>
 
-    <!-- <script src="{% static 'connexion.js' %}"></script> -->
+    <script src="{% static 'connexion.js' %}">
 </body>
 </html>

